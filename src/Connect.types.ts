@@ -1,7 +1,3 @@
-export type ChangeEventPayload = {
-  value: string;
-};
-
-export type ConnectViewProps = {
-  name: string;
+export type Configuration = {
+  linkSessionToken: string;
 };
