@@ -28,7 +28,9 @@
   "author": "MoneyKit <info@moneykit.com> (https://github.com/moneykit)",
   "license": "MIT",
   "homepage": "https://github.com/moneykit/moneykit-connect-react-native-source#readme",
-  "dependencies": {},
+  "dependencies": {
+    "expo-modules-core": "~1.5.10"
+  },
   "devDependencies": {
     "@types/react": "^18.0.25",
     "expo-module-scripts": "^3.0.11",
