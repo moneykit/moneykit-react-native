@@ -1,7 +1,8 @@
 export type ConnectConfiguration = {
   linkSessionToken: string;
   onSuccess: (payload: SuccessPayload) => void;
-  onExit: () => void;
+  onExit: (error: LinkError | null) => void;
+  onEvent?: (event: LinkEvent) => void;
 };
 
 export type SuccessPayload = {
@@ -39,4 +40,16 @@ export type Institution = {
   avatarDark: string | null;
   logo: string | null;
   logoDark: string | null;
+};
+
+export type LinkEvent = {
+  name: string;
+  sessionId: string;
+  properties: Record<string, unknown>;
+};
+
+export type LinkError = {
+  identifier: string;
+  displayedMessage: string;
+  requestId: string | null;
 };
