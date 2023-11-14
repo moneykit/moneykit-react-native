@@ -1,10 +1,14 @@
 import {
   ConnectConfiguration,
   presentInstitutionSelectionFlow,
+  continueFlow,
 } from "moneykit-connect-react-native-source";
 import { StyleSheet, View } from "react-native";
 
+import * as Linking from 'expo-linking';
+
 import Button from "./Button";
+import { useEffect } from 'react';
 
 const config: ConnectConfiguration = {
   linkSessionToken: "<replace-with-your-link-session-token>",
@@ -24,6 +28,12 @@ const presentConnectInstitutionSelectionFlow = () => {
 };
 
 export default function App() {
+  const url = Linking.useURL();
+
+  if (url) {
+    continueFlow(url)
+  }
+
   return (
     <View style={styles.container}>
       <Button
