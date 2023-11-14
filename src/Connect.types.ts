@@ -1,7 +1,7 @@
 export type ConnectConfiguration = {
   linkSessionToken: string;
   onSuccess: (payload: SuccessPayload) => void;
-  onExit: () => void;
+  onExit: (error: LinkError | null) => void;
   onEvent?: (event: LinkEvent) => void;
 };
 

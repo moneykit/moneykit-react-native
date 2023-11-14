@@ -21,7 +21,7 @@ const addListenerWithCleanup = (eventName: string, listener: Function) => {
         }
 
         if (["onExit", "onSuccess"].includes(eventName)) {
-          // emitter.removeAllListeners("onEvent");
+          emitter.removeAllListeners("onEvent");
         }
       }
     }
