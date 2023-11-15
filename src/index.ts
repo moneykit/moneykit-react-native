@@ -11,9 +11,17 @@ const addListenerWithCleanup = (eventName: string, listener: Function) => {
     (args: unknown) => {
       listener(args);
       if (listenerSubscription) {
-        listenerSubscription.remove();
+
+        if (eventName !== "onEvent") {
+          listenerSubscription.remove();
+        }
+
         if (eventName === "onExit") {
           emitter.removeAllListeners("onSuccess");
+        }
+
+        if (["onExit", "onSuccess"].includes(eventName)) {
+          emitter.removeAllListeners("onEvent");
         }
       }
     }
@@ -44,6 +52,10 @@ export async function presentLinkFlow({
   if (onEvent) addListenerWithCleanup("onEvent", onEvent);
 
   return await Connect.presentLinkFlow({ linkSessionToken });
+}
+
+export async function continueFlow(url: string) {
+  return await Connect.continueFlow(url)
 }
 
 export { ConnectConfiguration } from "./Connect.types";

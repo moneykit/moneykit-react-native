@@ -3,6 +3,7 @@
     "name": "moneykit-connect-react-native-source-example",
     "slug": "moneykit-connect-react-native-source-example",
     "version": "1.0.0",
+    "scheme": "myapp",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

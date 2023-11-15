@@ -11,8 +11,9 @@ public class ConnectModule: Module {
 
     private var linkHandler: MKLinkHandler?
 
-    private let onSuccessEventName = "onSuccess"
-    private let onExitEventName = "onExit"
+    private let onSuccess = "onSuccess"
+    private let onEvent = "onEvent"
+    private let onExit = "onExit"
 
     // MARK: - Public functions
 
@@ -20,14 +21,17 @@ public class ConnectModule: Module {
         Name("Connect")
 
         Events(
-            onSuccessEventName,
-            onExitEventName
+            onSuccess,
+            onEvent,
+            onExit
         )
 
         AsyncFunction("presentInstitutionSelectionFlow") { (value: Configuration) in
             self.linkHandler = self.createLinkHandler(for: value.linkSessionToken)
 
-            guard let currentViewcontroller = appContext?.utilities?.currentViewController() else { return }
+            guard let currentViewcontroller = appContext?.utilities?.currentViewController() else { 
+                throw MissingCurrentViewControllerException()
+            }
 
             self.linkHandler?.presentInstitutionSelectionFlow(using: .modal(presentingViewController: currentViewcontroller))
         }
@@ -36,9 +40,20 @@ public class ConnectModule: Module {
         AsyncFunction("presentLinkFlow") { (value: Configuration) in
             self.linkHandler = self.createLinkHandler(for: value.linkSessionToken)
 
-            guard let currentViewcontroller = appContext?.utilities?.currentViewController() else { return }
+            guard let currentViewcontroller = appContext?.utilities?.currentViewController() else {
+                throw MissingCurrentViewControllerException()
+            }
 
             self.linkHandler?.presentLinkFlow(on: currentViewcontroller)
+        }
+        .runOnQueue(.main)
+
+         AsyncFunction("continueFlow") { (from: String) in
+            guard let url = URL(string: from) else {
+                throw InvalidOauthURLException()
+            }
+
+            self.linkHandler?.continueFlow(from: url)
         }
         .runOnQueue(.main)
     }
@@ -49,32 +64,62 @@ public class ConnectModule: Module {
         do {
             let linkConfiguration =  try MKConfiguration(
                 sessionToken: linkSessionToken,
-                onSuccess: { [weak self] successType in
-                    guard let self = self else { return }
-
-                    switch successType {
-                    case let .linked(linkedInstitution):
-                        self.sendEvent(self.onSuccessEventName, [
-                            "institution_id": linkedInstitution.institution.id
-                        ])
-                    case let .relinked(relinkedInstitution):
-                        self.sendEvent(self.onSuccessEventName, [
-                            "institution_id": relinkedInstitution.institution.id
-                        ])
-                    @unknown default:
-                        break
-                    }
-                },
-                onExit: {
-                    self.sendEvent(self.onExitEventName)
-                }
+                onSuccess: handleConnectSuccess(successType:),
+                onExit: handleConnectExit(error:),
+                onEvent: handleConnectEvent(event:)
             )
 
             return MKLinkHandler(configuration: linkConfiguration)
         } catch let error {
-            print("Configuration error - \(error.localizedDescription)")
-
+            sendEvent(self.onExit)
             return nil
         }
+    }
+
+    private func handleConnectSuccess(successType: MKLinkSuccessType) {
+        switch successType {
+        case let .linked(linkedInstitution):
+            self.sendEvent(self.onSuccess, [
+                "institution": linkedInstitution.institution.dictionary,
+                "accounts": linkedInstitution.accounts.dictionary,
+                "token": linkedInstitution.token.dictionary,
+                "trackedScreens": linkedInstitution.trackedScreens.dictionary
+            ])
+        case let .relinked(relinkedInstitution):
+            self.sendEvent(self.onSuccess, [
+                "institution": relinkedInstitution.institution.dictionary,
+                "accounts": relinkedInstitution.accounts.dictionary,
+                "trackedScreens": relinkedInstitution.trackedScreens.dictionary
+            ])
+        @unknown default:
+            break
+        }
+    }
+
+    private func handleConnectExit(error: MKLinkError?) {
+        if let error = error {
+            sendEvent(self.onExit, [
+                "identifier": error.identifier,
+                "displayedMessage": error.displayedMessage,
+                "requestId": error.requestId
+            ])
+        } else {
+            sendEvent(self.onExit)
+        }
+    }
+
+    private func handleConnectEvent(event: MKLinkEvent) {
+        sendEvent(self.onEvent, [
+            "name": event.name,
+            "sessionId": event.sessionId,
+            "properties": event.properties
+        ])
+    }
+}
+
+extension Encodable {
+    var dictionary: [String: Any]? {
+        guard let data = try? JSONEncoder().encode(self) else { return nil }
+        return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? [String: Any] }
     }
 }
