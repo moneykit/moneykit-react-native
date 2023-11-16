@@ -70,8 +70,19 @@ public class ConnectModule: Module {
             )
 
             return MKLinkHandler(configuration: linkConfiguration)
-        } catch let error {
-            sendEvent(self.onExit)
+        } catch let error as MKConfiguration.ConfigurationError {
+            sendEvent(self.onExit, [
+                "identifier": error.identifier,
+                "displayedMessage": error.localizedDescription,
+                "requestId": nil
+            ])
+            return nil
+        } catch {
+            sendEvent(self.onExit, [
+                "identifier": "unknown",
+                "displayedMessage": "Session token malformed",
+                "requestId": nil
+            ])
             return nil
         }
     }
@@ -79,18 +90,9 @@ public class ConnectModule: Module {
     private func handleConnectSuccess(successType: MKLinkSuccessType) {
         switch successType {
         case let .linked(linkedInstitution):
-            self.sendEvent(self.onSuccess, [
-                "institution": linkedInstitution.institution.dictionary,
-                "accounts": linkedInstitution.accounts.dictionary,
-                "token": linkedInstitution.token.dictionary,
-                "trackedScreens": linkedInstitution.trackedScreens.dictionary
-            ])
+            self.sendEvent(self.onSuccess, self.serialize(linkedInstitution) ?? [:])
         case let .relinked(relinkedInstitution):
-            self.sendEvent(self.onSuccess, [
-                "institution": relinkedInstitution.institution.dictionary,
-                "accounts": relinkedInstitution.accounts.dictionary,
-                "trackedScreens": relinkedInstitution.trackedScreens.dictionary
-            ])
+            self.sendEvent(self.onSuccess, self.serialize(relinkedInstitution) ?? [:])
         @unknown default:
             break
         }
@@ -115,11 +117,10 @@ public class ConnectModule: Module {
             "properties": event.properties
         ])
     }
-}
 
-extension Encodable {
-    var dictionary: [String: Any]? {
-        guard let data = try? JSONEncoder().encode(self) else { return nil }
+    private func serialize(_ object: Codable) -> [String: Any]? {
+        guard let data = try? JSONEncoder().encode(object) else { return nil }
+
         return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? [String: Any] }
     }
 }
