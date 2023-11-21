@@ -1,4 +1,4 @@
-package expo.modules.moneykitconnectreactnativesource
+package expo.modules.moneykitconnectreactnative
 
 import android.net.Uri
 import com.moneykit.connect.MkConfiguration

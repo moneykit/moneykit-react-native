@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "moneykit-connect-react-native-source-example",
-    "slug": "moneykit-connect-react-native-source-example",
+    "name": "moneykit-connect-react-native-example",
+    "slug": "moneykit-connect-react-native-example",
     "version": "1.0.0",
     "scheme": "myapp",
     "orientation": "portrait",
@@ -17,14 +17,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "expo.modules.moneykitconnectreactnativesource.example"
+      "bundleIdentifier": "expo.modules.moneykitconnectreactnative.example"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "expo.modules.moneykitconnectreactnativesource.example"
+      "package": "expo.modules.moneykitconnectreactnative.example"
     },
     "web": {
       "favicon": "./assets/favicon.png"

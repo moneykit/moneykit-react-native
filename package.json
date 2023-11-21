@@ -1,5 +1,5 @@
 {
-  "name": "moneykit-connect-react-native-source",
+  "name": "moneykit-connect-react-native",
   "version": "0.1.0",
   "description": "MoneyKit Connect is a quick and secure way to link bank accounts from within your app. The drop-in framework handles connecting to a financial institution in your app (credential validation, multi-factor authentication, error handling, etc.) without passing sensitive information to your server",
   "main": "build/index.js",
@@ -18,16 +18,16 @@
   "keywords": [
     "react-native",
     "expo",
-    "moneykit-connect-react-native-source",
+    "moneykit-connect-react-native",
     "Connect"
   ],
-  "repository": "https://github.com/moneykit/moneykit-connect-react-native-source",
+  "repository": "https://github.com/moneykit/moneykit-connect-react-native",
   "bugs": {
-    "url": "https://github.com/moneykit/moneykit-connect-react-native-source/issues"
+    "url": "https://github.com/moneykit/moneykit-connect-react-native/issues"
   },
   "author": "MoneyKit <info@moneykit.com> (https://github.com/moneykit)",
   "license": "MIT",
-  "homepage": "https://github.com/moneykit/moneykit-connect-react-native-source#readme",
+  "homepage": "https://github.com/moneykit/moneykit-connect-react-native#readme",
   "dependencies": {
     "expo-modules-core": "~1.5.10"
   },

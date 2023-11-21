@@ -4,6 +4,6 @@
     "modules": ["ConnectModule"]
   },
   "android": {
-    "modules": ["expo.modules.moneykitconnectreactnativesource.ConnectModule"]
+    "modules": ["expo.modules.moneykitconnectreactnative.ConnectModule"]
   }
 }

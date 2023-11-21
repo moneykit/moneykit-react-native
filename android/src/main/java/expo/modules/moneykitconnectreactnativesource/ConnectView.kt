@@ -1,4 +1,4 @@
-package expo.modules.moneykitconnectreactnativesource
+package expo.modules.moneykitconnectreactnative
 
 import android.content.Context
 import expo.modules.kotlin.AppContext

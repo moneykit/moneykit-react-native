@@ -3,8 +3,8 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "moneykit-connect-react-native-source": ["../src/index"],
-      "moneykit-connect-react-native-source/*": ["../src/*"]
+      "moneykit-connect-react-native": ["../src/index"],
+      "moneykit-connect-react-native/*": ["../src/*"]
     }
   }
 }
