@@ -1,4 +1,4 @@
-package expo.modules.moneykitconnectreactnativesource.example;
+package expo.modules.moneykitconnectreactnative.example;
 
 import android.os.Build;
 import android.os.Bundle;

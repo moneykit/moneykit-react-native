@@ -6,7 +6,7 @@ module.exports = async (env, argv) => {
     {
       ...env,
       babel: {
-        dangerouslyAddModulePathsToTranspile: ['moneykit-connect-react-native-source'],
+        dangerouslyAddModulePathsToTranspile: ['moneykit-connect-react-native'],
       },
     },
     argv

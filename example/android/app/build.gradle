@@ -81,9 +81,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace 'expo.modules.moneykitconnectreactnativesource.example'
+    namespace 'expo.modules.moneykitconnectreactnative.example'
     defaultConfig {
-        applicationId 'expo.modules.moneykitconnectreactnativesource.example'
+        applicationId 'expo.modules.moneykitconnectreactnative.example'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
