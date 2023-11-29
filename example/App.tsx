@@ -10,12 +10,12 @@ import { StyleSheet, View } from "react-native";
 import Button from "./Button";
 
 const config: ConnectConfiguration = {
-  linkSessionToken: "<replace-with-your-link-session-token>",
+  linkSessionToken: "<replace-with-your-link-session-token>"
   onSuccess(payload) {
     console.log("Success payload: ", payload);
   },
   onExit(error) {
-    error && console.log("Error: ", error);
+    error && console.log("Exit: ", error);
   },
   onEvent(event) {
     console.log("Event: ", event);

@@ -113,7 +113,7 @@ public class ConnectModule: Module {
     private func handleConnectEvent(event: MKLinkEvent) {
         sendEvent(self.onEvent, [
             "name": event.name,
-            "sessionId": event.sessionId,
+            "meta": event.meta,
             "properties": event.properties
         ])
     }
