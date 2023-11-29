@@ -15,7 +15,7 @@ const config: ConnectConfiguration = {
     console.log("Success payload: ", payload);
   },
   onExit(error) {
-    error && console.log("Error: ", error);
+    error && console.log("Exit: ", error);
   },
   onEvent(event) {
     console.log("Event: ", event);

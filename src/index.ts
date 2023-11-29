@@ -3,9 +3,7 @@ import { EventEmitter } from "expo-modules-core";
 import Connect from "./Connect";
 import { ConnectConfiguration } from "./Connect.types";
 
-const emitter = new EventEmitter(Connect);
-
-const addListenerWithCleanup = (eventName: string, listener: Function) => {
+const addListenerWithCleanup = (emitter: EventEmitter, eventName: string, listener: Function) => {
   const listenerSubscription = emitter.addListener(
     eventName,
     (args: unknown) => {
@@ -34,9 +32,11 @@ export async function presentInstitutionSelectionFlow({
   onEvent,
   linkSessionToken,
 }: ConnectConfiguration) {
-  addListenerWithCleanup("onSuccess", onSuccess);
-  addListenerWithCleanup("onExit", onExit);
-  if (onEvent) addListenerWithCleanup("onEvent", onEvent);
+  const emitter = new EventEmitter(Connect);
+
+  addListenerWithCleanup(emitter, "onSuccess", onSuccess);
+  addListenerWithCleanup(emitter, "onExit", onExit);
+  if (onEvent) addListenerWithCleanup(emitter, "onEvent", onEvent);
 
   return await Connect.presentInstitutionSelectionFlow({ linkSessionToken });
 }
@@ -47,9 +47,11 @@ export async function presentLinkFlow({
   onEvent,
   linkSessionToken,
 }: ConnectConfiguration) {
-  addListenerWithCleanup("onSuccess", onSuccess);
-  addListenerWithCleanup("onExit", onExit);
-  if (onEvent) addListenerWithCleanup("onEvent", onEvent);
+  const emitter = new EventEmitter(Connect);
+
+  addListenerWithCleanup(emitter, "onSuccess", onSuccess);
+  addListenerWithCleanup(emitter, "onExit", onExit);
+  if (onEvent) addListenerWithCleanup(emitter, "onEvent", onEvent);
 
   return await Connect.presentLinkFlow({ linkSessionToken });
 }
