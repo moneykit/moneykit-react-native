@@ -1,9 +1,8 @@
 import {
   ConnectConfiguration,
   presentLinkFlow,
-  continueFlow
+  continueFlow,
 } from "@moneykit/connect-react-native";
-
 import * as Linking from "expo-linking";
 import { StyleSheet, View } from "react-native";
 
@@ -35,10 +34,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Button
-        title="Connect a bank"
-        onPress={presentMoneyKit}
-      />
+      <Button title="Connect a bank" onPress={presentMoneyKit} />
     </View>
   );
 }

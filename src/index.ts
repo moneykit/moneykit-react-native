@@ -1,32 +1,29 @@
-import { EventEmitter } from "expo-modules-core";
+import { EventEmitter, Subscription } from "expo-modules-core";
 
 import Connect from "./Connect";
 import { ConnectConfiguration } from "./Connect.types";
 
-const addListenerWithCleanup = (emitter: EventEmitter, eventName: string, listener: Function) => {
-  const listenerSubscription = emitter.addListener(
-    eventName,
-    (args: unknown) => {
-      listener(args);
-      if (listenerSubscription) {
+type EventName = "onSuccess" | "onExit" | "onEvent";
 
-        console.log(`Count of onSuccess: `,emitter._eventEmitter.listenerCount("onSuccess"))
-        console.log(`Count of onExit: `,emitter._eventEmitter.listenerCount("onExit"))
-        console.log(`Count of onEvent: `,emitter._eventEmitter.listenerCount("onEvent"))
+const addListenerWithCleanup = (
+  emitter: EventEmitter,
+  subscriptions: Record<EventName, Subscription[]>,
+  eventName: EventName,
+  listener: Function
+) => {
+  subscriptions[eventName].push(
+    emitter.addListener(eventName, (...args: unknown[]) => {
+      // Perform callback
+      listener(...args);
 
-        if (eventName !== "onEvent") {
-          emitter.removeAllListeners(eventName);
-        }
-  
-        if (eventName === "onExit") {
-          emitter.removeAllListeners("onSuccess");
-        }
-
-        if (["onExit", "onSuccess"].includes(eventName)) {
-          emitter.removeAllListeners("onEvent");
-        }
+      // Cleanup registered listeners on completion
+      const isExitOrSuccessEvent = ["onExit", "onSuccess"].includes(eventName);
+      if (isExitOrSuccessEvent) {
+        unsubscribeAll(subscriptions, "onSuccess");
+        unsubscribeAll(subscriptions, "onExit");
+        unsubscribeAll(subscriptions, "onEvent");
       }
-    }
+    })
   );
 };
 
@@ -36,23 +33,31 @@ export async function presentLinkFlow({
   onEvent,
   linkSessionToken,
 }: ConnectConfiguration) {
-  console.log("Present Link Flow")
   const emitter = new EventEmitter(Connect);
+  const subscriptions: Record<EventName, Subscription[]> = {
+    onSuccess: [],
+    onExit: [],
+    onEvent: [],
+  };
 
-  addListenerWithCleanup(emitter, "onSuccess", onSuccess);
-  addListenerWithCleanup(emitter, "onExit", onExit);
+  addListenerWithCleanup(emitter, subscriptions, "onSuccess", onSuccess);
+  addListenerWithCleanup(emitter, subscriptions, "onExit", onExit);
+  if (onEvent)
+    addListenerWithCleanup(emitter, subscriptions, "onEvent", onEvent);
 
-  if (onEvent) addListenerWithCleanup(emitter, "onEvent", onEvent);
-
-  console.log(`Count of onSuccess: `,emitter._eventEmitter.listenerCount("onSuccess"))
-  console.log(`Count of onExit: `,emitter._eventEmitter.listenerCount("onExit"))
-  console.log(`Count of onEvent: `,emitter._eventEmitter.listenerCount("onEvent"))
-  
   return await Connect.presentLinkFlow({ linkSessionToken });
 }
 
 export async function continueFlow(url: string) {
-  return await Connect.continueFlow(url)
+  return await Connect.continueFlow(url);
 }
 
 export { ConnectConfiguration } from "./Connect.types";
+
+function unsubscribeAll(
+  subscriptions: Record<EventName, Subscription[]>,
+  eventName: EventName
+) {
+  subscriptions[eventName].forEach((subscription) => subscription.remove());
+  subscriptions[eventName] = [];
+}
