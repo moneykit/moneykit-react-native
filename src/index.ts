@@ -10,10 +10,14 @@ const addListenerWithCleanup = (emitter: EventEmitter, eventName: string, listen
       listener(args);
       if (listenerSubscription) {
 
-        if (eventName !== "onEvent") {
-          listenerSubscription.remove();
-        }
+        console.log(`Count of onSuccess: `,emitter._eventEmitter.listenerCount("onSuccess"))
+        console.log(`Count of onExit: `,emitter._eventEmitter.listenerCount("onExit"))
+        console.log(`Count of onEvent: `,emitter._eventEmitter.listenerCount("onEvent"))
 
+        if (eventName !== "onEvent") {
+          emitter.removeAllListeners(eventName);
+        }
+  
         if (eventName === "onExit") {
           emitter.removeAllListeners("onSuccess");
         }
@@ -26,33 +30,24 @@ const addListenerWithCleanup = (emitter: EventEmitter, eventName: string, listen
   );
 };
 
-export async function presentInstitutionSelectionFlow({
-  onSuccess,
-  onExit,
-  onEvent,
-  linkSessionToken,
-}: ConnectConfiguration) {
-  const emitter = new EventEmitter(Connect);
-
-  addListenerWithCleanup(emitter, "onSuccess", onSuccess);
-  addListenerWithCleanup(emitter, "onExit", onExit);
-  if (onEvent) addListenerWithCleanup(emitter, "onEvent", onEvent);
-
-  return await Connect.presentInstitutionSelectionFlow({ linkSessionToken });
-}
-
 export async function presentLinkFlow({
   onSuccess,
   onExit,
   onEvent,
   linkSessionToken,
 }: ConnectConfiguration) {
+  console.log("Present Link Flow")
   const emitter = new EventEmitter(Connect);
 
   addListenerWithCleanup(emitter, "onSuccess", onSuccess);
   addListenerWithCleanup(emitter, "onExit", onExit);
+
   if (onEvent) addListenerWithCleanup(emitter, "onEvent", onEvent);
 
+  console.log(`Count of onSuccess: `,emitter._eventEmitter.listenerCount("onSuccess"))
+  console.log(`Count of onExit: `,emitter._eventEmitter.listenerCount("onExit"))
+  console.log(`Count of onEvent: `,emitter._eventEmitter.listenerCount("onEvent"))
+  
   return await Connect.presentLinkFlow({ linkSessionToken });
 }
 

@@ -1,10 +1,10 @@
 import {
   ConnectConfiguration,
-  presentInstitutionSelectionFlow,
-  continueFlow,
+  presentLinkFlow,
+  continueFlow
 } from "@moneykit/connect-react-native";
+
 import * as Linking from "expo-linking";
-import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 
 import Button from "./Button";
@@ -22,8 +22,8 @@ const config: ConnectConfiguration = {
   },
 };
 
-const presentConnectInstitutionSelectionFlow = () => {
-  presentInstitutionSelectionFlow(config);
+const presentMoneyKit = () => {
+  presentLinkFlow(config);
 };
 
 export default function App() {
@@ -37,7 +37,7 @@ export default function App() {
     <View style={styles.container}>
       <Button
         title="Connect a bank"
-        onPress={presentConnectInstitutionSelectionFlow}
+        onPress={presentMoneyKit}
       />
     </View>
   );
