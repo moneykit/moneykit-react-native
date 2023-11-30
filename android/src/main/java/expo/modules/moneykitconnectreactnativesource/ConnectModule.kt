@@ -46,12 +46,6 @@ class ConnectModule : Module() {
       "onExit",
     )
 
-    AsyncFunction("presentInstitutionSelectionFlow") { config: Configuration ->
-      linkHandler = createLinkHandler(config.linkSessionToken)
-
-      linkHandler?.presentInstitutionSelectionFlow(currentActivity)
-    }.runOnQueue(Queues.MAIN)
-
     AsyncFunction("presentLinkFlow") { config: Configuration ->
       linkHandler = createLinkHandler(config.linkSessionToken)
 

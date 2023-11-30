@@ -1,8 +1,8 @@
 PODS:
   - boost (1.76.0)
-  - Connect (0.1.2):
+  - Connect (0.1.3):
     - ExpoModulesCore
-    - MoneyKit (~> 1.1.9)
+    - MoneyKit (~> 1.1.10)
   - DoubleConversion (1.1.6)
   - EXApplication (5.3.1):
     - ExpoModulesCore
@@ -99,7 +99,7 @@ PODS:
     - hermes-engine/Pre-built (= 0.72.6)
   - hermes-engine/Pre-built (0.72.6)
   - libevent (2.1.12)
-  - MoneyKit (1.1.9)
+  - MoneyKit (1.1.10)
   - RCT-Folly (2021.07.22.00):
     - boost
     - DoubleConversion
@@ -694,7 +694,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
-  Connect: 296b38b60af71cbbe631c277aa551a9cc67c9f1d
+  Connect: 8f3f95627f9872fc80f04bb2e16799f1c5c49619
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   EXApplication: 042aa2e3f05258a16962ea1a9914bf288db9c9a1
   EXConstants: ce5bbea779da8031ac818c36bea41b10e14d04e1
@@ -717,7 +717,7 @@ SPEC CHECKSUMS:
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: 8057e75cfc1437b178ac86c8654b24e7fead7f60
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  MoneyKit: e1a6d7872ebf76387420587fc87b8ef6e2100728
+  MoneyKit: 7ed718679a2e9f84765d7e95257057366e11d3bd
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: 28469809442eb4eb5528462705f7d852948c8a74
   RCTTypeSafety: e9c6c409fca2cc584e5b086862d562540cb38d29
