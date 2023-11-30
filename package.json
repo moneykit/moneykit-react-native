@@ -1,6 +1,6 @@
 {
   "name": "@moneykit/connect-react-native",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "MoneyKit Connect is a quick and secure way to link bank accounts from within your app. The drop-in framework handles connecting to a financial institution in your app (credential validation, multi-factor authentication, error handling, etc.) without passing sensitive information to your server",
   "main": "build/index.js",
   "types": "build/index.d.ts",
