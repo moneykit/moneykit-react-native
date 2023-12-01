@@ -11,3 +11,9 @@ internal class InvalidOauthURLException: Exception {
         "`continueFlow` called with invalid OAuth URL"
     }
 }
+
+internal class MalformedLinkSessionTokenException: Exception {
+    override var reason: String {
+        "Malformed link session token"
+    }
+}
