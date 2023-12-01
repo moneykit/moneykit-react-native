@@ -33,10 +33,10 @@ public class ConnectModule: Module {
                 throw MissingCurrentViewControllerException()
             }
 
-            if self.requiresInstitutionSelection(for: value.linkSessionToken) {
-                self.linkHandler?.presentInstitutionSelectionFlow(using: .modal(presentingViewController: currentViewcontroller))
-            } else {
+            if try self.canSkipInstitutionSelection(for: value.linkSessionToken) {
                 self.linkHandler?.presentLinkFlow(on: currentViewcontroller)
+            } else {
+                self.linkHandler?.presentInstitutionSelectionFlow(using: .modal(presentingViewController: currentViewcontroller))
             }
         }
         .runOnQueue(.main)
@@ -111,38 +111,14 @@ public class ConnectModule: Module {
         ])
     }
 
-    private func requiresInstitutionSelection(for token: String) -> Bool {
-        let parts = token.components(separatedBy: ".")
+    private func canSkipInstitutionSelection(for token: String) throws -> Bool {
+        let jwtToken = try ConnectTokenDecoder.decodeToken(token)
 
-        if let header = self.decodeJWTPart(parts[0]) {
-            return header["institution_id"] as? String == nil
-        } else {
+        if jwtToken.header["institution_id"] as? String != nil {
             return true
+        } else {
+            return false
         }
-    }
-
-    private func base64Decode(_ value: String) -> Data? {
-        var base64 = value
-            .replacingOccurrences(of: "-", with: "+")
-            .replacingOccurrences(of: "_", with: "/")
-        let length = Double(base64.lengthOfBytes(using: String.Encoding.utf8))
-        let requiredLength = 4 * ceil(length / 4.0)
-        let paddingLength = requiredLength - length
-        if paddingLength > 0 {
-            let padding = "".padding(toLength: Int(paddingLength), withPad: "=", startingAt: 0)
-            base64 += padding
-        }
-        return Data(base64Encoded: base64, options: .ignoreUnknownCharacters)
-    }
-
-    private func decodeJWTPart(_ value: String) -> [String: Any]? {
-        guard let bodyData = base64Decode(value),
-              let json = try? JSONSerialization.jsonObject(with: bodyData, options: []), 
-              let payload = json as? [String: Any] else {
-            return nil
-        }
-
-        return payload
     }
 
     private func serialize(_ object: Codable) -> [String: Any]? {
