@@ -59,3 +59,4 @@ struct ConnectTokenDecoder {
 
         return payload
     }
+}

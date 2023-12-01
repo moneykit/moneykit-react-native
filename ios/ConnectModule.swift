@@ -114,11 +114,7 @@ public class ConnectModule: Module {
     private func canSkipInstitutionSelection(for token: String) throws -> Bool {
         let jwtToken = try ConnectTokenDecoder.decodeToken(token)
 
-        if jwtToken.header["institution_id"] as? String != nil {
-            return true
-        } else {
-            return false
-        }
+        return jwtToken.header["institution_id"] as? String != nil
     }
 
     private func serialize(_ object: Codable) -> [String: Any]? {
