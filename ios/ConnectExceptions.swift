@@ -17,9 +17,3 @@ internal class MalformedLinkSessionTokenException: Exception {
         "Malformed link session token"
     }
 }
-
-internal class InvalidLinkSessionTokenException: Exception {
-    override var reason: String {
-        "Invalid link session token"
-    }
-}
