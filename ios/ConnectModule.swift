@@ -94,7 +94,7 @@ public class ConnectModule: Module {
     private func handleConnectExit(error: MKLinkError?) {
         if let error = error {
             sendEvent(self.onExit, [
-                "identifier": error.identifier,
+                "identifier": error.errorId,
                 "displayedMessage": error.displayedMessage,
                 "requestId": error.requestId
             ])
