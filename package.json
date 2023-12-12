@@ -21,13 +21,13 @@
     "moneykit",
     "connect"
   ],
-  "repository": "https://github.com/moneykit/moneykit-connect-react-native",
+  "repository": "https://github.com/moneykit/moneykit-react-native",
   "bugs": {
-    "url": "https://github.com/moneykit/moneykit-connect-react-native/issues"
+    "url": "https://github.com/moneykit/moneykit-react-native/issues"
   },
   "author": "MoneyKit <info@moneykit.com> (https://github.com/moneykit)",
   "license": "MIT",
-  "homepage": "https://github.com/moneykit/moneykit-connect-react-native#readme",
+  "homepage": "https://github.com/moneykit/moneykit-react-native#readme",
   "dependencies": {
     "expo-modules-core": "~1.5.10"
   },
