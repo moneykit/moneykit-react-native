@@ -33,11 +33,7 @@ public class ConnectModule: Module {
                 throw MissingCurrentViewControllerException()
             }
 
-            if try self.canSkipInstitutionSelection(for: value.linkSessionToken) {
-                self.linkHandler?.presentLinkFlow(on: currentViewcontroller)
-            } else {
-                self.linkHandler?.presentInstitutionSelectionFlow(using: .modal(presentingViewController: currentViewcontroller))
-            }
+            self.linkHandler?.presentLinkFlow(on: currentViewcontroller)
         }
         .runOnQueue(.main)
 
@@ -109,12 +105,6 @@ public class ConnectModule: Module {
             "meta": event.meta,
             "properties": event.properties
         ])
-    }
-
-    private func canSkipInstitutionSelection(for token: String) throws -> Bool {
-        let jwtToken = try ConnectTokenDecoder.decodeToken(token)
-
-        return jwtToken.header["institution_id"] as? String != nil
     }
 
     private func serialize(_ object: Codable) -> [String: Any]? {
