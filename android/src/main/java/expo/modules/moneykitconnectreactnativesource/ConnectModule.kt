@@ -1,5 +1,6 @@
 package expo.modules.moneykitconnectreactnative
 
+import android.content.Context
 import android.net.Uri
 import com.moneykit.connect.MkConfiguration
 import com.moneykit.connect.MkLinkHandler
@@ -23,6 +24,9 @@ class Configuration: Record {
 class ConnectModule : Module() {
   private val currentActivity
     get() = appContext.currentActivity ?: throw Exceptions.MissingActivity()
+
+  private val context: Context
+    get() = appContext.reactContext ?: throw Exceptions.ReactContextLost()
 
   private var linkHandler: MkLinkHandler? = null
 
@@ -54,7 +58,7 @@ class ConnectModule : Module() {
 
     AsyncFunction("continueFlow") { urlString: String ->
       val url = Uri.parse(urlString)
-      linkHandler?.continueFlow(url)
+      linkHandler?.continueFlow(context, url)
     }.runOnQueue(Queues.MAIN)
   }
 
