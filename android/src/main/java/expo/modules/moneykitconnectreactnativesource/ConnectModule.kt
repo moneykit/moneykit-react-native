@@ -4,8 +4,8 @@ import android.content.Context
 import android.net.Uri
 import com.moneykit.connect.MkConfiguration
 import com.moneykit.connect.MkLinkHandler
+import com.moneykit.connect.core.internal.models.MkLinkSessionEventData
 import com.moneykit.connect.entities.MkLinkError
-import com.moneykit.connect.entities.MkLinkEvent
 import com.moneykit.connect.entities.MkLinkSuccessType
 import com.moneykit.connect.entities.MkLinkedInstitution
 import com.moneykit.connect.entities.MkRelinkedInstitution
@@ -53,7 +53,7 @@ class ConnectModule : Module() {
     AsyncFunction("presentLinkFlow") { config: Configuration ->
       linkHandler = createLinkHandler(config.linkSessionToken)
 
-      linkHandler?.presentInstitutionSelectionFlow(currentActivity)
+      linkHandler?.presentLinkFlow(currentActivity)
     }.runOnQueue(Queues.MAIN)
 
     AsyncFunction("continueFlow") { urlString: String ->
@@ -106,16 +106,14 @@ class ConnectModule : Module() {
     }
 
     sendEvent(onExit, mapOf(
-//      "identifier" to error.identifier,
       "displayedMessage" to error.displayedMessage,
       "requestId" to error.requestId
     ))
   }
 
-  private fun handleConnectEvent(event: MkLinkEvent) {
+  private fun handleConnectEvent(event: MkLinkSessionEventData) {
     sendEvent(onEvent, mapOf(
       "name" to event.name,
-      "sessionId" to event.sessionId,
       "properties" to event.properties
     ))
   }
