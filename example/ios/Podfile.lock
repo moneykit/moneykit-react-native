@@ -1,8 +1,8 @@
 PODS:
   - boost (1.76.0)
-  - Connect (1.9.0):
+  - Connect (1.9.1):
     - ExpoModulesCore
-    - MoneyKit (~> 1.6.2)
+    - MoneyKit (~> 1.6.5)
   - DoubleConversion (1.1.6)
   - EXApplication (5.3.1):
     - ExpoModulesCore
@@ -99,7 +99,7 @@ PODS:
     - hermes-engine/Pre-built (= 0.72.6)
   - hermes-engine/Pre-built (0.72.6)
   - libevent (2.1.12)
-  - MoneyKit (1.6.2)
+  - MoneyKit (1.6.5)
   - RCT-Folly (2021.07.22.00):
     - boost
     - DoubleConversion
