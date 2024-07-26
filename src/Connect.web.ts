@@ -3,14 +3,6 @@ import { CodedError } from 'expo-modules-core';
 import { ConnectConfiguration } from "./Connect.types";
 
 export default {
-    async presentInstitutionSelectionFlow({
-        onSuccess,
-        onExit,
-        onEvent,
-        linkSessionToken,
-      }: ConnectConfiguration) {
-        throw new CodedError('UNAVAILABLE', 'Connect not available');
-      },
       async presentLinkFlow({
         onSuccess,
         onExit,
