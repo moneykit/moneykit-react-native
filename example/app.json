@@ -28,6 +28,16 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "14.0"
+          }
+        }
+      ]
+    ]
   }
 }
