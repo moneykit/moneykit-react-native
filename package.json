@@ -34,7 +34,7 @@
     "expo-modules-core": "^1.12.19"
   },
   "peerDependencies": {
-    "expo": "^50.0.7",
+    "expo": "*",
     "react": "*",
     "react-native": "*"
   }
