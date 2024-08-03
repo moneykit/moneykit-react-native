@@ -30,8 +30,8 @@
   "homepage": "https://github.com/moneykit/moneykit-react-native#readme",
   "devDependencies": {
     "@types/react": "^18.0.25",
-    "expo-module-scripts": "^3.4.0",
-    "expo-modules-core": "^1.11.2"
+    "expo-module-scripts": "^3.5.2",
+    "expo-modules-core": "^1.12.19"
   },
   "peerDependencies": {
     "expo": "^50.0.7",
