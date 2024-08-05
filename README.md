@@ -11,7 +11,7 @@ MoneyKit Connect is a quick and secure way to link bank accounts from within you
 npx expo install @moneykit/connect-react-native
 ```
 
-You will also need to specify the deployment target for iOS in your `app.json` or `app.config.js` file:
+You will also need to specify the deployment target for iOS and a minimum SDK version for Android in your `app.json` or `app.config.js` file:
 ```json
 "plugins": [
   [
@@ -19,7 +19,10 @@ You will also need to specify the deployment target for iOS in your `app.json` o
     {
       "ios": {
         "deploymentTarget": "14.0"
-      }
+      },
+      "android": {
+        "minSdkVersion": 26,
+      },
     }
   ]
 ]
