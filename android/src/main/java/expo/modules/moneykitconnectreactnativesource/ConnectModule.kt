@@ -25,9 +25,6 @@ class ConnectModule : Module() {
   private val currentActivity
     get() = appContext.currentActivity ?: throw Exceptions.MissingActivity()
 
-  private val context: Context
-    get() = appContext.reactContext ?: throw Exceptions.ReactContextLost()
-
   private var linkHandler: MkLinkHandler? = null
 
   private val onSuccess = "onSuccess"
@@ -58,7 +55,7 @@ class ConnectModule : Module() {
 
     AsyncFunction("continueFlow") { urlString: String ->
       val url = Uri.parse(urlString)
-      linkHandler?.continueFlow(context, url)
+      linkHandler?.continueFlow(currentActivity, url)
     }.runOnQueue(Queues.MAIN)
   }
 
