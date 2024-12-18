@@ -120,7 +120,9 @@ class ConnectModule : Module() {
       "id" to institution.id,
       "name" to institution.name,
     ),
-    "token" to token.value,
+    "token" to mapOf(
+      "value" to token.value
+    ),
     "accounts" to accounts.map { account ->
       mapOf(
         "id" to account.id,
