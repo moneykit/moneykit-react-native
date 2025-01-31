@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.static_framework = true
 
   s.dependency 'ExpoModulesCore'
-  s.dependency 'MoneyKit', '~> 1.8.3'
+  s.dependency 'MoneyKit', '~> 1.9.0'
 
   # Swift/Objective-C compatibility
   s.pod_target_xcconfig = {
