@@ -9,10 +9,15 @@ export type SuccessPayload = {
   institution: Institution;
   accounts: Account[];
   token: ExchangeableToken | null;
+  linkIdentifier: LinkIdentifier | null;
   trackedScreens: TrackedScreen[];
 };
 
 export type ExchangeableToken = {
+  value: string;
+};
+
+export type LinkIdentifier = {
   value: string;
 };
 
