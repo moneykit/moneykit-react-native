@@ -116,6 +116,7 @@ class ConnectModule : Module() {
   }
 
   private fun MkLinkedInstitution.toMap() = mapOf(
+    "linkIdentifier" to linkId,
     "institution" to mapOf(
       "id" to institution.id,
       "name" to institution.name,
@@ -140,6 +141,7 @@ class ConnectModule : Module() {
   )
 
   private fun MkRelinkedInstitution.toMap() = mapOf(
+    "linkIdentifier" to linkId,
     "institution" to mapOf(
       "id" to institution.id,
       "name" to institution.name,
