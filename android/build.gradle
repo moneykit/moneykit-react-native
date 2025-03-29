@@ -89,5 +89,5 @@ repositories {
 dependencies {
   implementation project(':expo-modules-core')
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${getKotlinVersion()}"
-  implementation "com.moneykit:connect:0.3.1"
+  implementation "com.moneykit:connect:0.4.0"
 }
