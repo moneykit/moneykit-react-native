@@ -4,11 +4,11 @@ import android.content.Context
 import android.net.Uri
 import com.moneykit.connect.MkConfiguration
 import com.moneykit.connect.MkLinkHandler
-import com.moneykit.connect.core.internal.models.MkLinkSessionEventData
 import com.moneykit.connect.entities.MkLinkError
 import com.moneykit.connect.entities.MkLinkSuccessType
 import com.moneykit.connect.entities.MkLinkedInstitution
 import com.moneykit.connect.entities.MkRelinkedInstitution
+import com.moneykit.connect.entities.MkLinkEvent
 import expo.modules.kotlin.exception.Exceptions
 import expo.modules.kotlin.functions.Queues
 import expo.modules.kotlin.modules.Module
@@ -108,7 +108,7 @@ class ConnectModule : Module() {
     ))
   }
 
-  private fun handleConnectEvent(event: MkLinkSessionEventData) {
+  private fun handleConnectEvent(event: MkLinkEvent) {
     sendEvent(onEvent, mapOf(
       "name" to event.name,
       "properties" to event.properties
