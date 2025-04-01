@@ -33,3 +33,9 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Exclude project folders as they can be generated with `npx expo prebuild`
+# Avoid making custom changes in these folders so that updates are simple 
+# in the future, and so native builds can be created on EAS Build
+android/
+ios/
