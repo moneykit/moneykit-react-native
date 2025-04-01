@@ -3,12 +3,12 @@
     "name": "moneykit-connect-react-native-example",
     "slug": "moneykit-connect-react-native-example",
     "version": "1.0.0",
-    "scheme": "myapp",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,7 +17,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "expo.modules.moneykitconnectreactnative.example"
+      "bundleIdentifier": "expo.modules.moneykitconnectreactnative.example",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
