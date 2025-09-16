@@ -25,8 +25,8 @@ if (useManagedAndroidSdkVersions) {
   project.android {
     compileSdkVersion safeExtGet("compileSdkVersion", 34)
     defaultConfig {
-      minSdkVersion safeExtGet("minSdkVersion", 21)
-      targetSdkVersion safeExtGet("targetSdkVersion", 34)
+      minSdkVersion safeExtGet("minSdkVersion", 23)
+      targetSdkVersion safeExtGet("targetSdkVersion", 35)
     }
   }
 }
@@ -43,5 +43,5 @@ android {
 }
 
 dependencies {
-  implementation "com.moneykit:connect:0.4.1"
+  implementation "com.moneykit:connect:0.4.2"
 }
