@@ -1,10 +1,10 @@
+import React, { useEffect, useState } from "react";
 import {
   ConnectConfiguration,
   presentLinkFlow,
   continueFlow,
 } from "@moneykit/connect-react-native";
-import * as Linking from "expo-linking";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Linking } from "react-native";
 
 import Button from "./Button";
 
@@ -26,11 +26,28 @@ const presentMoneyKit = () => {
 };
 
 export default function App() {
-  const url = Linking.useURL();
+  const [initialUrl, setInitialUrl] = useState<string | null>(null);
 
-  if (url) {
-    continueFlow(url);
-  }
+  useEffect(() => {
+    // Handle initial URL if app was opened via deep link
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        setInitialUrl(url);
+        continueFlow(url);
+      }
+    });
+
+    // Handle deep links while app is running
+    const subscription = Linking.addEventListener("url", ({ url }) => {
+      if (url) {
+        continueFlow(url);
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   return (
     <View style={styles.container}>

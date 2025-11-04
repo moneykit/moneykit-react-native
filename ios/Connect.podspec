@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   s.source         = { git: 'https://github.com/moneykit/moneykit-connect-react-native' }
   s.static_framework = true
 
-  s.dependency 'ExpoModulesCore'
+  s.dependency 'React-Core'
   s.dependency 'MoneyKit', '~> 1.9.4'
 
   # Swift/Objective-C compatibility
@@ -23,6 +23,6 @@ Pod::Spec.new do |s|
     'DEFINES_MODULE' => 'YES',
     'SWIFT_COMPILATION_MODE' => 'wholemodule'
   }
-  
+
   s.source_files = "**/*.{h,m,swift}"
 end

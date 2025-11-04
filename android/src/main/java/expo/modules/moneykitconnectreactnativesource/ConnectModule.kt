@@ -1,7 +1,15 @@
 package expo.modules.moneykitconnectreactnative
 
-import android.content.Context
 import android.net.Uri
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.WritableArray
+import com.facebook.react.bridge.WritableMap
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.moneykit.connect.MkConfiguration
 import com.moneykit.connect.MkLinkHandler
 import com.moneykit.connect.entities.MkLinkError
@@ -9,21 +17,8 @@ import com.moneykit.connect.entities.MkLinkSuccessType
 import com.moneykit.connect.entities.MkLinkedInstitution
 import com.moneykit.connect.entities.MkRelinkedInstitution
 import com.moneykit.connect.entities.MkLinkEvent
-import expo.modules.kotlin.exception.Exceptions
-import expo.modules.kotlin.functions.Queues
-import expo.modules.kotlin.modules.Module
-import expo.modules.kotlin.modules.ModuleDefinition
-import expo.modules.kotlin.records.Field
-import expo.modules.kotlin.records.Record
 
-class Configuration: Record {
-  @Field
-  var linkSessionToken: String = ""
-}
-
-class ConnectModule : Module() {
-  private val currentActivity
-    get() = appContext.currentActivity ?: throw Exceptions.MissingActivity()
+class ConnectModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
   private var linkHandler: MkLinkHandler? = null
 
@@ -31,32 +26,69 @@ class ConnectModule : Module() {
   private val onEvent = "onEvent"
   private val onExit = "onExit"
 
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
-  override fun definition() = ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('Connect')` in JavaScript.
-    Name("Connect")
+  override fun getName(): String {
+    return "Connect"
+  }
 
-    // Defines event names that the module can send to JavaScript.
-    Events(
-      "onSuccess",
-      "onEvent",
-      "onExit",
-    )
+  @ReactMethod
+  @Suppress("UNUSED_PARAMETER")
+  fun addListener(eventName: String) {
+    // Required for RN built-in Event Emitter Calls
+  }
 
-    AsyncFunction("presentLinkFlow") { config: Configuration ->
-      linkHandler = createLinkHandler(config.linkSessionToken)
+  @ReactMethod
+  @Suppress("UNUSED_PARAMETER")
+  fun removeListeners(count: Int) {
+    // Required for RN built-in Event Emitter Calls
+  }
 
-      linkHandler?.presentLinkFlow(currentActivity)
-    }.runOnQueue(Queues.MAIN)
+  @ReactMethod
+  fun presentLinkFlow(config: ReadableMap, promise: Promise) {
+    if (!config.hasKey("linkSessionToken")) {
+      promise.reject("INVALID_CONFIG", "linkSessionToken is required")
+      return
+    }
 
-    AsyncFunction("continueFlow") { urlString: String ->
-      val url = Uri.parse(urlString)
-      linkHandler?.continueFlow(currentActivity, url)
-    }.runOnQueue(Queues.MAIN)
+    val linkSessionToken = config.getString("linkSessionToken")
+    if (linkSessionToken == null) {
+      promise.reject("INVALID_CONFIG", "linkSessionToken is required")
+      return
+    }
+
+    val activity = currentActivity
+    if (activity == null) {
+      promise.reject("NO_ACTIVITY", "Activity doesn't exist")
+      return
+    }
+
+    linkHandler = createLinkHandler(linkSessionToken)
+
+    activity.runOnUiThread {
+      linkHandler?.presentLinkFlow(activity)
+      promise.resolve(null)
+    }
+  }
+
+  @ReactMethod
+  fun continueFlow(urlString: String, promise: Promise) {
+    val activity = currentActivity
+    if (activity == null) {
+      promise.reject("NO_ACTIVITY", "Activity doesn't exist")
+      return
+    }
+
+    val url = Uri.parse(urlString)
+
+    activity.runOnUiThread {
+      linkHandler?.continueFlow(activity, url)
+      promise.resolve(null)
+    }
+  }
+
+  private fun sendEvent(eventName: String, params: WritableMap?) {
+    reactApplicationContext
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+      .emit(eventName, params)
   }
 
   private fun createLinkHandler(linkSessionToken: String): MkLinkHandler? {
@@ -70,18 +102,14 @@ class ConnectModule : Module() {
 
       return MkLinkHandler(configuration)
     } catch (error: MkConfiguration.ConfigurationError) {
-      sendEvent(onExit, mapOf(
-//      "identifier" to error.identifier,
-        "displayedMessage" to error.message,
-//        "requestId" to error.requestId
-      ))
+      val params = Arguments.createMap()
+      params.putString("displayedMessage", error.message)
+      sendEvent(onExit, params)
       return null
     } catch (error: Exception) {
-      sendEvent(onExit, mapOf(
-//      "identifier" to error.identifier,
-        "displayedMessage" to error.message,
-//        "requestId" to error.requestId
-      ))
+      val params = Arguments.createMap()
+      params.putString("displayedMessage", error.message)
+      sendEvent(onExit, params)
       return null
     }
   }
@@ -89,76 +117,111 @@ class ConnectModule : Module() {
   private fun handleConnectSuccess(successType: MkLinkSuccessType) {
     when (successType) {
       is MkLinkSuccessType.Linked ->
-        sendEvent(onSuccess, successType.institution.toMap())
+        sendEvent(onSuccess, successType.institution.toWritableMap())
 
       is MkLinkSuccessType.Relinked ->
-        sendEvent(onSuccess, successType.institution.toMap())
+        sendEvent(onSuccess, successType.institution.toWritableMap())
     }
   }
 
   private fun handleConnectExit(error: MkLinkError?) {
     if (error == null) {
-      sendEvent(onExit)
+      sendEvent(onExit, null)
       return
     }
 
-    sendEvent(onExit, mapOf(
-      "displayedMessage" to error.displayedMessage,
-      "requestId" to error.requestId
-    ))
+    val params = Arguments.createMap()
+    params.putString("displayedMessage", error.displayedMessage)
+    error.requestId?.let { params.putString("requestId", it) }
+    sendEvent(onExit, params)
   }
 
   private fun handleConnectEvent(event: MkLinkEvent) {
-    sendEvent(onEvent, mapOf(
-      "name" to event.name,
-      "properties" to event.properties
-    ))
+    val params = Arguments.createMap()
+    params.putString("name", event.name)
+
+    val properties = Arguments.createMap()
+    event.properties.forEach { (key, value) ->
+      if (value != null) {
+        properties.putString(key, value)
+      }
+    }
+    params.putMap("properties", properties)
+
+    sendEvent(onEvent, params)
   }
 
-  private fun MkLinkedInstitution.toMap() = mapOf(
-    "linkIdentifier" to linkId,
-    "institution" to mapOf(
-      "id" to institution.id,
-      "name" to institution.name,
-    ),
-    "token" to mapOf(
-      "value" to token.value
-    ),
-    "accounts" to accounts.map { account ->
-      mapOf(
-        "id" to account.id,
-        "name" to account.name,
-        "mask" to account.mask,
-        "type" to account.type,
-      )
-    },
-    "trackedScreens" to trackedScreens.map { trackedScreen ->
-      mapOf(
-        "name" to trackedScreen.name,
-        "tag" to trackedScreen.tag,
-      )
-    },
-  )
+  private fun MkLinkedInstitution.toWritableMap(): WritableMap {
+    val map = Arguments.createMap()
 
-  private fun MkRelinkedInstitution.toMap() = mapOf(
-    "linkIdentifier" to linkId,
-    "institution" to mapOf(
-      "id" to institution.id,
-      "name" to institution.name,
-    ),
-    "accounts" to accounts.map { account ->
-      mapOf(
-        "id" to account.id,
-        "name" to account.name,
-        "mask" to account.mask,
-        "type" to account.type,
-      )
-    },
-    "trackedScreens" to trackedScreens.map { trackedScreen ->
-      mapOf(
-        "name" to trackedScreen.name,
-        "tag" to trackedScreen.tag,
-      )
-    },
-  )
+    val linkIdMap = Arguments.createMap()
+    linkIdMap.putString("value", linkId)
+    map.putMap("linkIdentifier", linkIdMap)
+
+    val institutionMap = Arguments.createMap()
+    institutionMap.putString("id", institution.id)
+    institutionMap.putString("name", institution.name)
+    map.putMap("institution", institutionMap)
+
+    val tokenMap = Arguments.createMap()
+    tokenMap.putString("value", token.value)
+    map.putMap("token", tokenMap)
+
+    val accountsArray = Arguments.createArray()
+    accounts.forEach { account ->
+      val accountMap = Arguments.createMap()
+      accountMap.putString("id", account.id)
+      accountMap.putString("name", account.name)
+      account.mask?.let { accountMap.putString("mask", it) }
+      accountMap.putString("type", account.type)
+      accountsArray.pushMap(accountMap)
+    }
+    map.putArray("accounts", accountsArray)
+
+    val trackedScreensArray = Arguments.createArray()
+    trackedScreens.forEach { trackedScreen ->
+      val screenMap = Arguments.createMap()
+      screenMap.putString("name", trackedScreen.name)
+      screenMap.putString("tag", trackedScreen.tag)
+      trackedScreensArray.pushMap(screenMap)
+    }
+    map.putArray("trackedScreens", trackedScreensArray)
+
+    return map
+  }
+
+  private fun MkRelinkedInstitution.toWritableMap(): WritableMap {
+    val map = Arguments.createMap()
+
+    val linkIdMap = Arguments.createMap()
+    linkIdMap.putString("value", linkId)
+    map.putMap("linkIdentifier", linkIdMap)
+
+    val institutionMap = Arguments.createMap()
+    institutionMap.putString("id", institution.id)
+    institutionMap.putString("name", institution.name)
+    map.putMap("institution", institutionMap)
+
+    val accountsArray = Arguments.createArray()
+    accounts.forEach { account ->
+      val accountMap = Arguments.createMap()
+      accountMap.putString("id", account.id)
+      accountMap.putString("name", account.name)
+      account.mask?.let { accountMap.putString("mask", it) }
+      accountMap.putString("type", account.type)
+      accountsArray.pushMap(accountMap)
+    }
+    map.putArray("accounts", accountsArray)
+
+    val trackedScreensArray = Arguments.createArray()
+    trackedScreens.forEach { trackedScreen ->
+      val screenMap = Arguments.createMap()
+      screenMap.putString("name", trackedScreen.name)
+      screenMap.putString("tag", trackedScreen.tag)
+      trackedScreensArray.pushMap(screenMap)
+    }
+    map.putArray("trackedScreens", trackedScreensArray)
+
+    return map
+  }
 }

@@ -1,4 +1,10 @@
-import { requireNativeModule } from 'expo-modules-core';
+import { NativeModules } from 'react-native';
 
-export default requireNativeModule('Connect');
+const { Connect } = NativeModules;
+
+if (!Connect) {
+  throw new Error('MoneyKit Connect native module is not available. Make sure the library is linked correctly.');
+}
+
+export default Connect;
 
