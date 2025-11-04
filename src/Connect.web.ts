@@ -1,5 +1,3 @@
-import { CodedError } from 'expo-modules-core';
-
 import { ConnectConfiguration } from "./Connect.types";
 
 export default {
@@ -9,7 +7,7 @@ export default {
         onEvent,
         linkSessionToken,
       }: ConnectConfiguration) {
-        throw new CodedError('UNAVAILABLE', 'Connect not available');
+        throw new Error('MoneyKit Connect is not available on web platform');
       },
       async presentLinkFlow({
         onSuccess,
@@ -17,9 +15,9 @@ export default {
         onEvent,
         linkSessionToken,
       }: ConnectConfiguration) {
-        throw new CodedError('UNAVAILABLE', 'Connect not available');
+        throw new Error('MoneyKit Connect is not available on web platform');
       },
       async continueFlow(url: string) {
-        throw new CodedError('UNAVAILABLE', 'Connect not available');
+        throw new Error('MoneyKit Connect is not available on web platform');
       }
 };

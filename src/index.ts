@@ -1,9 +1,9 @@
-import { EventEmitter, Subscription } from "expo-modules-core";
+import { NativeEventEmitter, EmitterSubscription } from "react-native";
 
 import Connect from "./Connect";
 import { ConnectConfiguration } from "./Connect.types";
 
-export { ConnectConfiguration } from "./Connect.types";
+export type { ConnectConfiguration } from "./Connect.types";
 
 type EventName = "onSuccess" | "onExit" | "onEvent";
 
@@ -12,22 +12,22 @@ type EventName = "onSuccess" | "onExit" | "onEvent";
  * we may ensure they are cleaned up as needed, even in the unexpected case of
  * a missing exit signal from the native Connect module.
  *
- * Not ensuring this can lead to duplicate event processing or even Expo crashing
- * if it encounters an unexpected number of registered subscriptions in its own
- * cleanup functions.
+ * Not ensuring this can lead to duplicate event processing if it encounters an
+ * unexpected number of registered subscriptions in its own cleanup functions.
  *
  * These subscriptions should all be `remove()`'d and the array itself emptied
  * prior to beginning any new link.
  */
-let subscriptions: Subscription[] = [];
+let subscriptions: EmitterSubscription[] = [];
+
+const connectEmitter = new NativeEventEmitter(Connect);
 
 const addListenerWithCleanup = (
-  emitter: EventEmitter,
   eventName: EventName,
   listener: Function
 ) => {
   subscriptions.push(
-    emitter.addListener(eventName, (...args: unknown[]) => {
+    connectEmitter.addListener(eventName, (...args: unknown[]) => {
       // Perform callback
       listener(...args);
 
@@ -46,12 +46,11 @@ export async function presentLinkFlow({
   onEvent,
   linkSessionToken,
 }: ConnectConfiguration) {
-  const emitter = new EventEmitter(Connect);
   clearSubscriptions();
 
-  addListenerWithCleanup(emitter, "onSuccess", onSuccess);
-  addListenerWithCleanup(emitter, "onExit", onExit);
-  if (onEvent) addListenerWithCleanup(emitter, "onEvent", onEvent);
+  addListenerWithCleanup("onSuccess", onSuccess);
+  addListenerWithCleanup("onExit", onExit);
+  if (onEvent) addListenerWithCleanup("onEvent", onEvent);
 
   return await Connect.presentLinkFlow({ linkSessionToken });
 }

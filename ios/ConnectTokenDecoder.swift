@@ -1,5 +1,9 @@
 import Foundation
 
+enum TokenDecoderError: Error {
+    case malformedToken
+}
+
 struct ConnectTokenDecoder {
 
     struct JWTToken {
@@ -18,7 +22,7 @@ struct ConnectTokenDecoder {
     static func decodeToken(_ jwt: String) throws -> JWTToken {
         let parts = jwt.components(separatedBy: ".")
 
-        guard parts.count == 3 else { throw MalformedLinkSessionTokenException() }
+        guard parts.count == 3 else { throw TokenDecoderError.malformedToken }
 
         let header = try decodeJWTPart(parts[0])
         let body = try decodeJWTPart(parts[1])
@@ -50,11 +54,11 @@ struct ConnectTokenDecoder {
 
     private static func decodeJWTPart(_ value: String) throws -> [String: Any] {
         guard let bodyData = base64Decode(value) else {
-            throw MalformedLinkSessionTokenException()
+            throw TokenDecoderError.malformedToken
         }
 
         guard let json = try? JSONSerialization.jsonObject(with: bodyData, options: []), let payload = json as? [String: Any] else {
-            throw MalformedLinkSessionTokenException()
+            throw TokenDecoderError.malformedToken
         }
 
         return payload

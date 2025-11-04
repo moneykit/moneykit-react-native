@@ -1,19 +1,18 @@
-import ExpoModulesCore
+import Foundation
 
-internal class MissingCurrentViewControllerException: Exception {
-    override var reason: String {
-        "Cannot determine currently presented view controller"
-    }
-}
+internal enum ConnectError: LocalizedError {
+    case missingCurrentViewController
+    case invalidOauthURL
+    case malformedLinkSessionToken
 
-internal class InvalidOauthURLException: Exception {
-    override var reason: String {
-        "`continueFlow` called with invalid OAuth URL"
-    }
-}
-
-internal class MalformedLinkSessionTokenException: Exception {
-    override var reason: String {
-        "Malformed link session token"
+    var errorDescription: String? {
+        switch self {
+        case .missingCurrentViewController:
+            return "Cannot determine currently presented view controller"
+        case .invalidOauthURL:
+            return "`continueFlow` called with invalid OAuth URL"
+        case .malformedLinkSessionToken:
+            return "Malformed link session token"
+        }
     }
 }
