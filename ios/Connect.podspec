@@ -21,7 +21,9 @@ Pod::Spec.new do |s|
   # Swift/Objective-C compatibility
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',
-    'SWIFT_COMPILATION_MODE' => 'wholemodule'
+    'SWIFT_COMPILATION_MODE' => 'wholemodule',
+    # Xcode 16.3+ explicit-modules dependency scanner fails on React headers
+    'SWIFT_ENABLE_EXPLICIT_MODULES' => 'NO'
   }
   
   s.source_files = "**/*.{h,m,swift}"
